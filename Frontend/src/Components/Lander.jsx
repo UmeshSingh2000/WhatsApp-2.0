@@ -3,9 +3,20 @@ import lander_01 from '../assets/lander_01.svg'
 import { ArrowDownToLine, Lock, MoveUpRight } from 'lucide-react';
 import LoginPage from './LoginPage';
 import Navbar from './Navbar';
-import { Link } from 'react-router-dom';
+
+import { useState } from 'react';
+import RegisterPage from './RegisterPage';
 
 const Lander = () => {
+    const [activePage, setActivePage] = useState('login');
+    const handleActivePage = (page) => {
+        setActivePage(page);
+        if (page === 'login') {
+            document.title = 'WhatsApp - Login';
+        } else if (page === 'register') {
+            document.title = 'WhatsApp - Register';
+        }
+    }
     return (
         <>
             <Navbar />
@@ -39,15 +50,18 @@ const Lander = () => {
                 </div>
                 <article>
                     <div className="flex items-center justify-between mt-5 bg-white rounded-4xl border border-black p-6 w-[750px]  shadow-none">
-                        <LoginPage />
+                        {
+                            activePage === 'register' ? <RegisterPage /> : <LoginPage />
+                        }
                     </div>
                 </article>
-                <footer className='text-center text-sm space-y-4 mt-4'>
+                <footer className='text-center text-sm space-y-4 mt-4 mb-4'>
                     <h1 className='text-xl flex'>Don't have a WhatsApp account?
-                        <Link to='/register'>
-                            <span className='underline cursor-pointer hover:text-[#25D366] ml-2 flex items-center'>Get started  <MoveUpRight className='w-4' />
-                            </span>
-                        </Link>
+                        <span
+                            onClick={() => handleActivePage('register')}
+                            className='underline cursor-pointer hover:text-[#25D366] ml-2 flex items-center'>Get started  <MoveUpRight className='w-4' />
+                        </span>
+
                     </h1>
                     <p className='text-gray-500 flex items-center text-bold justify-center'><Lock className='w-4' /> Your personal messages are end-to-end encrypted.</p>
                 </footer>
