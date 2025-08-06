@@ -2,7 +2,7 @@ const errorMessage = require("../Utils/errorMessages");
 const statusCodes = require("../Utils/StatusCodes");
 const User = require('../Database/Models/userSchema');
 const { checkPassword, hashPassword } = require("../Utils/password");
-const { generateAccessToken } = require("../Utils/JWT");
+const { generateToken } = require("../Utils/JWT");
 
 const loginUser = async (req, res) => {
     try {
@@ -36,10 +36,14 @@ const loginUser = async (req, res) => {
         }
         // if everything is fine, return user data
         const { password: pass, __v, ...userData } = user.toObject();
-        
+
         //generate JWT token
-        const token = generateAccessToken(user._id);
-        res.cookie('accessToken' , token);
+        const token = generateToken(user._id);
+        res.cookie('accessToken', token);
+
+        //refresh token
+        const refreshToken = generateToken(user._id, true);
+        res.cookie('refreshToken', refreshToken);
         
         return res.status(statusCodes.OK).json({
             message: "Login successful",

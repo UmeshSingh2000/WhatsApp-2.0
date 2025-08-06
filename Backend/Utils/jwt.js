@@ -1,10 +1,16 @@
 const jwt = require('jsonwebtoken');
-const secret = process.env.JWT_SECRET;
 
-const generateAccessToken = (userId) => {
+
+const generateToken = (userId, isRefreshToken = false) => {
     try {
+        const secret = isRefreshToken
+            ? process.env.REFRESH_TOKEN_SECRET
+            : process.env.JWT_SECRET;
+
         const payload = { id: userId };
-        const options = { expiresIn: '1d' };
+
+        const options = { expiresIn: isRefreshToken ? '7d' : '1d' };
+
         return jwt.sign(payload, secret, options);
     } catch (error) {
         console.error("Error generating token:", error);
@@ -12,8 +18,13 @@ const generateAccessToken = (userId) => {
     }
 }
 
-const verifyToken = (token) => {
+
+const verifyToken = (token, isRefreshToken = false) => {
     try {
+        const secret = isRefreshToken
+            ? process.env.REFRESH_TOKEN_SECRET
+            : process.env.JWT_SECRET;
+            
         return jwt.verify(token, secret);
     } catch (error) {
         return null;
@@ -21,6 +32,6 @@ const verifyToken = (token) => {
 }
 
 module.exports = {
-    generateAccessToken,
-    verifyToken
+    generateToken,
+    verifyToken,
 };
