@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import Select from 'react-select';
 import countryCodes from '../Data/countryCodes'; // Adjust path
+import toast from 'react-hot-toast';
+import { registerUser } from '../Services/authServices';
+import { statusCodes } from '../Utils/statusCodes';
 
 // Create options with emoji flags
 const countryOptions = countryCodes.map((country) => ({
@@ -45,8 +48,54 @@ const customStyles = {
     }),
 };
 
+
 const RegisterPage = () => {
+    const [loading, setLoading] = useState(false);
+    const [userData, setUserData] = useState({
+        phoneNumber: '',
+        fullName: '',
+        password: ''
+    })
     const [selectedCode, setSelectedCode] = useState(countryOptions[0]);
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        if (!userData.phoneNumber || !userData.fullName || !userData.password) {
+            toast.error("Please fill all fields");
+            return;
+        }
+        try {
+            setLoading(true);
+            const data = {
+                phoneNumber: userData.phoneNumber,
+                name: userData.fullName,
+                password: userData.password,
+                countryCode: selectedCode.value
+            };
+            const res = await registerUser(data);
+            if (res.status === statusCodes.CREATED) {
+                toast.success(res.message);
+                setUserData({
+                    phoneNumber: '',
+                    fullName: '',
+                    password: ''
+                });
+                setSelectedCode(countryOptions[0]);
+            }
+        } catch (error) {
+            if (error.status === statusCodes.CONFLICT) {
+                toast.error("User already exists");
+            } else if (error.status === statusCodes.BAD_REQUEST) {
+                toast.error("Please fill all fields");
+            } else {
+                toast.error(error.error || "An error occurred, please try again later");
+            }
+            console.error("Registration error:", error);
+        }
+        finally {
+            setLoading(false);
+        }
+    }
+
 
     return (
         <div className='w-full flex flex-col items-center p-6 space-y-6'>
@@ -55,7 +104,7 @@ const RegisterPage = () => {
                 <p className='text-xl'>Select a country, enter your phone number, name, and password.</p>
             </header>
 
-            <form className='flex flex-col items-center space-y-4'>
+            <form onSubmit={(e) => handleSubmit(e)} className='flex flex-col items-center space-y-4'>
                 {/* Country Code Dropdown */}
                 <Select
                     options={countryOptions}
@@ -76,6 +125,8 @@ const RegisterPage = () => {
                     type="text"
                     placeholder="Enter your phone number"
                     className="border border-black rounded-full p-2 px-6 w-96 h-14"
+                    value={userData.phoneNumber}
+                    onChange={(e) => setUserData({ ...userData, phoneNumber: e.target.value })}
                 />
 
                 {/* Full Name Input */}
@@ -83,6 +134,8 @@ const RegisterPage = () => {
                     type="text"
                     placeholder="Full Name"
                     className="border border-black rounded-full p-2 px-6 w-96 h-14"
+                    value={userData.fullName}
+                    onChange={(e) => setUserData({ ...userData, fullName: e.target.value })}
                 />
 
                 {/* Password Input */}
@@ -90,6 +143,8 @@ const RegisterPage = () => {
                     type="password"
                     placeholder="Password"
                     className="border border-black rounded-full p-2 px-6 w-96 h-14"
+                    value={userData.password}
+                    onChange={(e) => setUserData({ ...userData, password: e.target.value })}
                 />
 
                 {/* Submit Button */}
