@@ -144,8 +144,23 @@ const registerUser = async (req, res) => {
 
     }
 }
+
+const refreshToken = (req, res) => {
+    try {
+        const { id } = req.user
+        const token = generateToken(id)
+        res.cookie('accessToken', token)
+        res.status(200).json({ message: "Access token refreshed" });
+    } catch (error) {
+        console.error(error);
+        res.status(statusCodes.INTERNAL_SERVER_ERROR).json({ message: errorMessage.SERVER.INTERNAL_SERVER_ERROR });
+    }
+}
+
+
 module.exports = {
     loginUser,
     registerUser,
-    checkPhoneNumberExists
+    checkPhoneNumberExists,
+    refreshToken
 };

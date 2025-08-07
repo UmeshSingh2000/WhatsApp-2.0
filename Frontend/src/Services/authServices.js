@@ -37,7 +37,7 @@ const loginUser = async (userData) => {
 const checkPhoneNumberExists = async (phoneNumber) => {
     try {
         const response = await api.post('/auth/check-phone', { phoneNumber });
-        if(response.status === statusCodes.OK){
+        if (response.status === statusCodes.OK) {
             return {
                 message: response.data.message,
                 status: response.status
@@ -48,11 +48,30 @@ const checkPhoneNumberExists = async (phoneNumber) => {
     }
 }
 
+const checkUserAuth = async () => {
+    try {
+        const response = await api.get('/check-auth')
+        console.log(response)
+        if (response.status === statusCodes.OK) {
+            return {
+                user: response.data.user,
+                status: response.status
+            }
+        }
+    } catch (error) {
+        console.log("Error checking user authentication:", error);
+        throw error?.response?.data || { message: 'Something went wrong while checking auth' };
+
+    }
+
+}
+
 
 
 
 export {
     registerUser,
     checkPhoneNumberExists,
-    loginUser
+    loginUser,
+    checkUserAuth
 }

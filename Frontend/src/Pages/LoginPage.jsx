@@ -6,6 +6,8 @@ import toast from 'react-hot-toast';
 import Loader from '../Components/Loader/Loader';
 import { statusCodes } from '../Utils/statusCodes';
 import { useNavigate } from 'react-router-dom';
+import { loginSuccess } from '../Redux/Features/authSlice';
+import { useDispatch } from 'react-redux';
 
 const countryOptions = countryCodes.map((country) => ({
     label: (
@@ -51,6 +53,7 @@ const customStyles = {
 
 const LoginPage = () => {
     const navigate = useNavigate();
+    const dispatch = useDispatch()
     const [userData, setUserData] = useState({ phoneNumber: '', password: '' });
     const [loading, setLoading] = useState(false);
     const [isNumberVerified, setIsNumberVerified] = useState(false);
@@ -89,6 +92,7 @@ const LoginPage = () => {
             if (response.status === statusCodes.OK) {
                 toast.success(response.message);
                 setUserData({ phoneNumber: '', password: '' });
+                dispatch(loginSuccess(response.user));
                 navigate('/chat');
             }
         } catch (error) {
