@@ -5,6 +5,7 @@ import { checkPhoneNumberExists, loginUser } from '../Services/authServices';
 import toast from 'react-hot-toast';
 import Loader from '../Components/Loader/Loader';
 import { statusCodes } from '../Utils/statusCodes';
+import { useNavigate } from 'react-router-dom';
 const countryOptions = countryCodes.map((country) => ({
     label: (
         <div className="flex items-center gap-2">
@@ -46,8 +47,10 @@ const customStyles = {
     }),
 };
 
-const LoginPage = () => {
 
+
+const LoginPage = () => {
+    const navigate = useNavigate()
     const [userData, setUserData] = useState({
         phoneNumber: '',
         password: ''
@@ -90,6 +93,11 @@ const LoginPage = () => {
             const response = await loginUser(userData);
             if (response.status === statusCodes.OK) {
                 toast.success(response.message);
+                setUserData({
+                    phoneNumber: '',
+                    password: ''
+                });
+                navigate('/chat');
             }
         } catch (error) {
             console.error("Error logging in:", error);
@@ -143,7 +151,7 @@ const LoginPage = () => {
                             className={`border border-black rounded-full p-2 px-6 w-96 h-14 ${isNumberVerified ? 'bg-gray-200 text-gray-500 cursor-not-allowed' : 'bg-white'
                                 }`}
                             value={userData.phoneNumber}
-                            onChange={(e) => setUserData({ ...userData, phoneNumber: selectedCode.value + e.target.value })}
+                            onChange={(e) => setUserData({ ...userData, phoneNumber: e.target.value })}
                         />
                         {isNumberVerified && (
                             <input
