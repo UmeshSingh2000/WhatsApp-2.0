@@ -67,7 +67,7 @@ const RegisterPage = () => {
         try {
             setLoading(true);
             const data = {
-                phoneNumber: userData.phoneNumber,
+                phoneNumber: selectedCode.value + userData.phoneNumber,
                 name: userData.fullName,
                 password: userData.password,
                 countryCode: selectedCode.value
@@ -83,7 +83,7 @@ const RegisterPage = () => {
                 setSelectedCode(countryOptions[0]);
             }
         } catch (error) {
-            if (error.status === statusCodes.CONFLICT) {
+            if (error.status === statusCodes.NOT_FOUND) {
                 toast.error("User already exists");
             } else if (error.status === statusCodes.BAD_REQUEST) {
                 toast.error("Please fill all fields");

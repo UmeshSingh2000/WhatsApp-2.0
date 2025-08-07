@@ -65,6 +65,7 @@ const LoginPage = () => {
         }
         try {
             setLoading(true);
+            userData.phoneNumber = selectedCode.value + userData.phoneNumber;
             const response = await checkPhoneNumberExists(userData.phoneNumber);
             if (response.status === statusCodes.OK) {
                 setIsNumberVerified(true);
@@ -88,6 +89,7 @@ const LoginPage = () => {
         }
         try {
             setLoading(true);
+            
             const response = await loginUser(userData);
             if (response.status === statusCodes.OK) {
                 toast.success(response.message);

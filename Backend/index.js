@@ -31,6 +31,7 @@ connectDb()
 app.get('/', (req, res) => {
     res.send('Server is running');
 });
+
 app.use('/api/auth', userRoutes) //add limiter here later if needed
 
 

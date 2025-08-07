@@ -3,10 +3,11 @@ const statusCodes = require("../Utils/StatusCodes");
 const User = require('../Database/Models/userSchema');
 const { checkPassword, hashPassword } = require("../Utils/password");
 const { generateToken } = require("../Utils/JWT");
+const { phoneNumberValid, removeNonDigitCharacters } = require("../Utils/helpers");
 
 const loginUser = async (req, res) => {
     try {
-        const { phoneNumber, password } = req.body;
+        let { phoneNumber, password } = req.body;
         if (!phoneNumber || !password) {
             return res
                 .status(statusCodes.BAD_REQUEST)
@@ -14,6 +15,16 @@ const loginUser = async (req, res) => {
                     error: errorMessage.VALIDATION.MISSING_FIELDS
                 });
         }
+        //validate Phone Number
+        if (!phoneNumberValid(phoneNumber)) {
+            return res
+                .status(statusCodes.BAD_REQUEST)
+                .json({
+                    error: errorMessage.VALIDATION.INVALID_PHONE_NUMBER
+                });
+        }
+        //remove non digits from number
+        phoneNumber = removeNonDigitCharacters(phoneNumber);
 
         //check if user exists
         const user = await User.findOne({ phoneNumber });
@@ -61,7 +72,7 @@ const loginUser = async (req, res) => {
 
 const checkPhoneNumberExists = async (req, res) => {
     try {
-        const { phoneNumber } = req.body;
+        let { phoneNumber } = req.body;
         if (!phoneNumber) {
             return res
                 .status(statusCodes.BAD_REQUEST)
@@ -69,6 +80,17 @@ const checkPhoneNumberExists = async (req, res) => {
                     error: errorMessage.VALIDATION.MISSING_FIELDS
                 });
         }
+        //validate Phone Number
+        if (!phoneNumberValid(phoneNumber)) {
+            return res
+                .status(statusCodes.BAD_REQUEST)
+                .json({
+                    error: errorMessage.VALIDATION.INVALID_PHONE_NUMBER
+                });
+        }
+        //remove non digits from number
+        phoneNumber = removeNonDigitCharacters(phoneNumber);
+
         const user = await User.exists({ phoneNumber });
         if (!user) {
             return res
@@ -92,7 +114,7 @@ const checkPhoneNumberExists = async (req, res) => {
 
 const registerUser = async (req, res) => {
     try {
-        const { phoneNumber, password, name, countryCode } = req.body;
+        let { phoneNumber, password, name, countryCode } = req.body;
         if (!phoneNumber || !password || !name || !countryCode) {
             return res
                 .status(statusCodes.BAD_REQUEST)
@@ -100,6 +122,18 @@ const registerUser = async (req, res) => {
                     error: errorMessage.VALIDATION.MISSING_FIELDS
                 });
         }
+        // Validate phone number format
+
+        if (!phoneNumberValid(phoneNumber)) {
+            return res
+                .status(statusCodes.BAD_REQUEST)
+                .json({
+                    error: errorMessage.VALIDATION.INVALID_PHONE_NUMBER
+                });
+        }
+
+        phoneNumber = removeNonDigitCharacters(phoneNumber);
+
         // check if user already exists
         const existingUser = await User.findOne({
             phoneNumber
