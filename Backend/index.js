@@ -5,6 +5,7 @@ const cookieParser = require('cookie-parser');
 const connectDb = require('./Database/config');
 const limiter = require('./Middleware/rateLimiter');
 const userRoutes = require('./Routes/userRoutes');
+const messageRoutes = require('./Routes/messageRoute')
 const statusCodes = require('./Utils/StatusCodes');
 const authenticateToken = require('./Middleware/authenticateToken');
 const errorMessage = require('./Utils/errorMessages');
@@ -33,7 +34,7 @@ app.get('/', (req, res) => {
 });
 
 app.use('/api/auth', userRoutes) //add limiter here later if needed
-
+app.use('/api/chat', authenticateToken(), messageRoutes);
 
 //auth check
 app.get('/api/check-auth', authenticateToken('access'), async (req, res) => {

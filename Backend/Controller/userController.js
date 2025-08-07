@@ -49,11 +49,11 @@ const loginUser = async (req, res) => {
         const { password: pass, __v, ...userData } = user.toObject();
 
         //generate JWT token
-        const token = generateToken(user._id);
+        const token = generateToken(user._id, user.phoneNumber);
         res.cookie('accessToken', token);
 
         //refresh token
-        const refreshToken = generateToken(user._id, true);
+        const refreshToken = generateToken(user._id, user.phoneNumber, true);
         res.cookie('refreshToken', refreshToken);
 
         return res.status(statusCodes.OK).json({
@@ -157,11 +157,11 @@ const registerUser = async (req, res) => {
 
         //generate cookie to automatically login
         //generate JWT token
-        const token = generateToken(newUser._id);
+        const token = generateToken(newUser._id, newUser.phoneNumber);
         res.cookie('accessToken', token);
 
         //refresh token
-        const refreshToken = generateToken(newUser._id, true);
+        const refreshToken = generateToken(newUser._id, newUser.phoneNumber, true);
         res.cookie('refreshToken', refreshToken);
 
         return res.status(statusCodes.CREATED).json({
@@ -181,8 +181,8 @@ const registerUser = async (req, res) => {
 
 const refreshToken = (req, res) => {
     try {
-        const { id } = req.user
-        const token = generateToken(id)
+        const { id, phoneNumber } = req.user
+        const token = generateToken(id, phoneNumber)
         res.cookie('accessToken', token)
         res.status(200).json({ message: "Access token refreshed" });
     } catch (error) {

@@ -1,13 +1,13 @@
 const jwt = require('jsonwebtoken');
 
 
-const generateToken = (userId, isRefreshToken = false) => {
+const generateToken = (userId, phoneNumber, isRefreshToken = false) => {
     try {
         const secret = isRefreshToken
             ? process.env.REFRESH_TOKEN_SECRET
             : process.env.JWT_SECRET;
 
-        const payload = { id: userId };
+        const payload = { id: userId, phoneNumber };
 
         const options = { expiresIn: isRefreshToken ? '7d' : '1d' };
 
@@ -24,7 +24,7 @@ const verifyToken = (token, isRefreshToken = false) => {
         const secret = isRefreshToken
             ? process.env.REFRESH_TOKEN_SECRET
             : process.env.JWT_SECRET;
-            
+
         return jwt.verify(token, secret);
     } catch (error) {
         return null;

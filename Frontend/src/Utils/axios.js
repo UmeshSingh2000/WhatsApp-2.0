@@ -2,7 +2,7 @@ import axios from "axios";
 import { statusCodes } from "./statusCodes";
 
 const baseUrl = import.meta.env.VITE_BASE_URL;
-const MAX_RETRIES = 2;
+const MAX_RETRIES = 1;
 const api = axios.create({
     baseURL: 'http://localhost:3000/api',
     withCredentials: true

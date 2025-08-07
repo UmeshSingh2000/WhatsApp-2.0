@@ -51,7 +51,6 @@ const checkPhoneNumberExists = async (phoneNumber) => {
 const checkUserAuth = async () => {
     try {
         const response = await api.get('/check-auth')
-        console.log(response)
         if (response.status === statusCodes.OK) {
             return {
                 user: response.data.user,
