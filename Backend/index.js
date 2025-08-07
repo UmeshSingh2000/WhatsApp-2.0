@@ -9,6 +9,7 @@ const statusCodes = require('./Utils/StatusCodes');
 const authenticateToken = require('./Middleware/authenticateToken');
 const errorMessage = require('./Utils/errorMessages');
 const User = require('./Database/Models/userSchema');
+const { processData } = require('./Utils/webHook');
 require('dotenv').config();
 const PORT = process.env.PORT || 3000;
 
@@ -20,6 +21,11 @@ app.use(cors({
 app.use(limiter())
 app.use(cookieParser());
 connectDb()
+
+
+// processData() // --> Uncomment this line to process payloads
+// This function reads payloads from the 'Payloads' directory and updates the database accordingly.
+
 
 
 app.get('/', (req, res) => {
