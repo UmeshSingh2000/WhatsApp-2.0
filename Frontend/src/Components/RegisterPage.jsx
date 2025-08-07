@@ -4,6 +4,7 @@ import countryCodes from '../Data/countryCodes'; // Adjust path
 import toast from 'react-hot-toast';
 import { registerUser } from '../Services/authServices';
 import { statusCodes } from '../Utils/statusCodes';
+import Loader from './Loader/Loader';
 
 // Create options with emoji flags
 const countryOptions = countryCodes.map((country) => ({
@@ -95,7 +96,11 @@ const RegisterPage = () => {
             setLoading(false);
         }
     }
-
+    if (loading) {
+        return (
+            <Loader />
+        )
+    }
 
     return (
         <div className='w-full flex flex-col items-center p-6 space-y-6'>
