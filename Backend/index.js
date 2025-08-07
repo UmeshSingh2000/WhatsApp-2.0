@@ -19,7 +19,7 @@ connectDb()
 app.get('/', (req, res) => {
     res.send('Server is running');
 });
-app.use('/api/auth', limiter(15 * 60 * 1000, 15), userRoutes)
+app.use('/api/auth', userRoutes) //add limiter here later if needed
 
 // Start the server
 app.listen(PORT, () => {

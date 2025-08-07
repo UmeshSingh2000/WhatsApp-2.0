@@ -2,7 +2,7 @@
 import lander_01 from '../assets/lander_01.svg'
 import { ArrowDownToLine, Lock, MoveUpRight } from 'lucide-react';
 import LoginPage from './LoginPage';
-import Navbar from './Navbar';
+import Navbar from '../Components/Navbar';
 
 import { useState } from 'react';
 import RegisterPage from './RegisterPage';

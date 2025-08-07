@@ -44,13 +44,44 @@ const loginUser = async (req, res) => {
         //refresh token
         const refreshToken = generateToken(user._id, true);
         res.cookie('refreshToken', refreshToken);
-        
+
         return res.status(statusCodes.OK).json({
             message: "Login successful",
             user: userData
         })
     } catch (error) {
         console.error("Error logging in user:", error);
+        res
+            .status(statusCodes.INTERNAL_SERVER_ERROR)
+            .json({
+                error: errorMessage.SERVER.INTERNAL_SERVER_ERROR
+            });
+    }
+}
+
+const checkPhoneNumberExists = async (req, res) => {
+    try {
+        const { phoneNumber } = req.body;
+        if (!phoneNumber) {
+            return res
+                .status(statusCodes.BAD_REQUEST)
+                .json({
+                    error: errorMessage.VALIDATION.MISSING_FIELDS
+                });
+        }
+        const user = await User.exists({ phoneNumber });
+        if (!user) {
+            return res
+                .status(statusCodes.NOT_FOUND)
+                .json({
+                    error: errorMessage.AUTH.USER_NOT_FOUND
+                });
+        }
+        return res.status(statusCodes.OK).json({
+            message: "User exists",
+        });
+    } catch (error) {
+        console.log("Error checking phone number:", error);
         res
             .status(statusCodes.INTERNAL_SERVER_ERROR)
             .json({
@@ -89,6 +120,16 @@ const registerUser = async (req, res) => {
         })
         await newUser.save();
         const { password: pass, __v, ...userData } = newUser.toObject();
+
+        //generate cookie to automatically login
+        //generate JWT token
+        const token = generateToken(newUser._id);
+        res.cookie('accessToken', token);
+
+        //refresh token
+        const refreshToken = generateToken(newUser._id, true);
+        res.cookie('refreshToken', refreshToken);
+
         return res.status(statusCodes.CREATED).json({
             message: "User registered successfully",
             user: userData
@@ -105,5 +146,6 @@ const registerUser = async (req, res) => {
 }
 module.exports = {
     loginUser,
-    registerUser
+    registerUser,
+    checkPhoneNumberExists
 };

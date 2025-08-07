@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import Select from 'react-select';
-import countryCodes from '../Data/countryCodes'; // Adjust path
+import countryCodes from '../Data/countryCodes';
 import toast from 'react-hot-toast';
 import { registerUser } from '../Services/authServices';
 import { statusCodes } from '../Utils/statusCodes';
-import Loader from './Loader/Loader';
+import Loader from '../Components/Loader/Loader';
 
 // Create options with emoji flags
 const countryOptions = countryCodes.map((country) => ({

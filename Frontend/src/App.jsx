@@ -1,6 +1,6 @@
 
 import { Toaster } from 'react-hot-toast'
-import Lander from './Components/Lander'
+import Lander from './Pages/Lander'
 import { Route, Routes } from 'react-router-dom'
 
 const App = () => {
