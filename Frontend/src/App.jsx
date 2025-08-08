@@ -6,9 +6,21 @@ import PrivateRoute from './Components/PrivateRoute'
 import { useEffect } from 'react'
 import { checkAuth } from './Redux/Features/authSlice'
 import { useDispatch } from 'react-redux'
-
+import { io } from 'socket.io-client'
+import socket from './socket'
 const fulfilled = "auth/checkAuth/fulfilled"
+const api = import.meta.env.VITE_SOCKET_URL
 const App = () => {
+  useEffect(() => {
+    socket.on('connect', () => {
+      console.log('Socket connected:', socket.id);
+    });
+
+    // Clean up when component unmounts
+    return () => {
+      socket.off('connect');
+    };
+  }, []);
 
   //uncomment this for authentication
 
@@ -24,7 +36,7 @@ const App = () => {
   //     }
   //   )()
   // }, [])
-  
+
   return (
     <>
       <Toaster

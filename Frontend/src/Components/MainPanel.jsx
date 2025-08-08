@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Lock,
   UserCircle2,
@@ -6,9 +6,39 @@ import {
   Search,
   Phone,
   Video,
+  SendHorizontal,
 } from "lucide-react";
+import socket from "../socket";
+import { addMessage, groupMessage } from "../Redux/Features/messageSlice";
+import { useDispatch } from "react-redux";
 
 const MainPanel = ({ selectedChat }) => {
+  const dispatch = useDispatch()
+  const [message, setMessage] = useState('')
+
+  const sendMessage = (userId, name) => {
+    if (message.trim() === '') return;
+
+    socket.emit('send_message', { message, userId, name })
+    setMessage('')
+  }
+
+  const handleMessage = async (data) => {
+    await dispatch(addMessage(data))
+    await dispatch(groupMessage())
+  };
+  useEffect(() => {
+
+    socket.on('message_sent', handleMessage);
+
+    return () => {
+      socket.off('message_sent', handleMessage);
+    };
+  }, []);
+
+
+
+
   if (!selectedChat) {
     return (
       <main className="flex-1 flex flex-col items-center justify-center px-2 md:px-0 bg-[#161717]">
@@ -82,9 +112,8 @@ const MainPanel = ({ selectedChat }) => {
             return (
               <div
                 key={msg._id}
-                className={`flex items-end gap-2 ${
-                  isIncoming ? "justify-start" : "justify-end"
-                }`}
+                className={`flex items-end gap-2 ${isIncoming ? "justify-start" : "justify-end"
+                  }`}
               >
                 {/* Show avatar on last message of group */}
                 {isIncoming && showTail && (
@@ -103,10 +132,9 @@ const MainPanel = ({ selectedChat }) => {
 
                 <div
                   className={`relative max-w-[65%] px-3 py-2 text-[14px] leading-[19px] shadow-sm
-                    ${
-                      isIncoming
-                        ? "bg-[#242626] text-gray-100 rounded-lg"
-                        : "bg-[#144D37] text-white rounded-lg"
+                    ${isIncoming
+                      ? "bg-[#242626] text-gray-100 rounded-lg"
+                      : "bg-[#144D37] text-white rounded-lg"
                     }
                   `}
                   style={{
@@ -118,9 +146,8 @@ const MainPanel = ({ selectedChat }) => {
                 >
                   <div className="pr-12">{msg.body}</div>
                   <div
-                    className={`absolute bottom-1 right-3 text-[11px] flex items-center gap-1 ${
-                      isIncoming ? "text-gray-400" : "text-gray-300"
-                    }`}
+                    className={`absolute bottom-1 right-3 text-[11px] flex items-center gap-1 ${isIncoming ? "text-gray-400" : "text-gray-300"
+                      }`}
                   >
                     <span>
                       {new Date(Number(msg.timestamp)).toLocaleTimeString([], {
@@ -158,9 +185,19 @@ const MainPanel = ({ selectedChat }) => {
             type="text"
             placeholder="Type a message"
             className="w-full bg-[#242626] text-white placeholder-gray-400 rounded-lg px-4 py-2 pr-12 focus:outline-none"
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && message.trim()) {
+                sendMessage(selectedChat.wa_id, selectedChat.name);
+              }
+            }}
           />
         </div>
-        <button className="text-gray-400 hover:text-gray-200">🎤</button>
+        {
+          message.length !== 0 ? <button className="text-gray-400 hover:text-gray-200 cursor-pointer" onClick={() => sendMessage(selectedChat.wa_id, selectedChat.name)}><SendHorizontal /></button> :
+            <button className="text-gray-400 hover:text-gray-200">🎤</button>
+        }
       </div>
     </main>
   );

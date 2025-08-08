@@ -28,7 +28,7 @@ export const authSlice = createSlice({
         loginSuccess: (state, action) => {
             state.user = action.payload;
             state.isAuthenticated = true;
-        }
+        },
     },
     extraReducers: (builder) => {
         builder.addCase(checkAuth.pending, (state) => {

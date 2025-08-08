@@ -8,7 +8,7 @@ const processedMessageSchema = new Schema({
     to: { type: String, required: true },
     body: { type: String, required: true },
     status: { type: String, enum: ['sent', 'delivered', 'read'], default: 'sent' },
-    timestamp: { type: String },
+    timestamp: { type: String, },
     wa_id: { type: String },
     name: { type: String }
 }, {

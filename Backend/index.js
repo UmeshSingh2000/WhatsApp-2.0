@@ -1,42 +1,55 @@
 const express = require('express');
-const app = express();
+const http = require('http');
+const { Server } = require('socket.io');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
+require('dotenv').config();
+
 const connectDb = require('./Database/config');
 const limiter = require('./Middleware/rateLimiter');
 const userRoutes = require('./Routes/userRoutes');
-const messageRoutes = require('./Routes/messageRoute')
+const messageRoutes = require('./Routes/messageRoute');
 const statusCodes = require('./Utils/StatusCodes');
 const authenticateToken = require('./Middleware/authenticateToken');
 const errorMessage = require('./Utils/errorMessages');
 const User = require('./Database/Models/userSchema');
 const { processData } = require('./Utils/webHook');
-require('dotenv').config();
-const PORT = process.env.PORT || 3000;
+const socketHandler = require('./Sockets/socketHandler');
 
+
+const app = express();
+const server = http.createServer(app);
+const io = new Server(server, {
+    cors: {
+        origin: 'http://localhost:5173',
+        credentials: true,
+        methods: ['GET', 'POST']
+    }
+});
+
+// Middlewares
 app.use(express.json());
 app.use(cors({
     origin: 'http://localhost:5173',
     credentials: true,
 }));
-app.use(limiter())
 app.use(cookieParser());
-connectDb()
+app.use(limiter());
 
+// DB Connection
+connectDb();
 
-// processData() // --> Uncomment this line to process payloads
-// This function reads payloads from the 'Payloads' directory and updates the database accordingly.
+// Uncomment if needed to process payloads
+// processData();
 
-
-
+// Routes
 app.get('/', (req, res) => {
     res.send('Server is running');
 });
 
-app.use('/api/auth', userRoutes) //add limiter here later if needed
+app.use('/api/auth', userRoutes);
 app.use('/api/chat', messageRoutes);
 
-//auth check
 app.get('/api/check-auth', authenticateToken('access'), async (req, res) => {
     try {
         const { id } = req.user;
@@ -60,12 +73,14 @@ app.get('/api/check-auth', authenticateToken('access'), async (req, res) => {
         return res.status(statusCodes.INTERNAL_SERVER_ERROR).json({
             message: errorMessage.INTERNAL_SERVER_ERROR
         });
-
     }
+});
 
-})
+// Socket.IO setup
+socketHandler(io);
 
-// Start the server
-app.listen(PORT, () => {
+// Start server
+const PORT = process.env.PORT || 3000;
+server.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });

@@ -42,6 +42,9 @@ export const messageSlice = createSlice({
             }
 
             state.groupedChat = Array.from(map.values());
+        },
+        addMessage: (state, action) => {
+            state.chats = [action.payload, ...state.chats]
         }
 
 
@@ -63,5 +66,5 @@ export const messageSlice = createSlice({
     }
 })
 
-export const { groupMessage } = messageSlice.actions;
+export const { groupMessage, addMessage } = messageSlice.actions;
 export default messageSlice.reducer;
