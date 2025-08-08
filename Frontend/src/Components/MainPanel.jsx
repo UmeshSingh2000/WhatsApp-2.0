@@ -7,6 +7,7 @@ import {
   Phone,
   Video,
   SendHorizontal,
+  Check,
 } from "lucide-react";
 import socket from "../socket";
 import { addMessage, groupMessage } from "../Redux/Features/messageSlice";
@@ -36,8 +37,32 @@ const MainPanel = ({ selectedChat }) => {
     };
   }, []);
 
-
-
+  const renderMessageStatus = (status) => {
+    switch (status) {
+      case 'read':
+        return (
+          <span className="text-blue-400">
+            <Check size={14} strokeWidth={3} className="inline" />
+            <Check size={14} strokeWidth={3} className="inline -ml-1" />
+          </span>
+        );
+      case 'delivered':
+        return (
+          <span className="text-gray-400">
+            <Check size={14} strokeWidth={3} className="inline" />
+            <Check size={14} strokeWidth={3} className="inline -ml-1" />
+          </span>
+        );
+      case 'sent':
+        return (
+          <span className="text-gray-400">
+            <Check size={14} strokeWidth={3} className="inline" />
+          </span>
+        );
+      default:
+        return null;
+    }
+  };
 
   if (!selectedChat) {
     return (
@@ -144,9 +169,9 @@ const MainPanel = ({ selectedChat }) => {
                       !isIncoming && showTail ? "4px" : "12px",
                   }}
                 >
-                  <div className="pr-12">{msg.body}</div>
+                  <div className="break-words pr-16">{msg.body}</div>
                   <div
-                    className={`absolute bottom-1 right-3 text-[11px] flex items-center gap-1 ${isIncoming ? "text-gray-400" : "text-gray-300"
+                    className={`absolute bottom-1 right-2 text-[11px] flex items-center gap-1 ${isIncoming ? "text-gray-400" : "text-gray-300"
                       }`}
                   >
                     <span>
@@ -155,6 +180,11 @@ const MainPanel = ({ selectedChat }) => {
                         minute: "2-digit",
                       })}
                     </span>
+                    {!isIncoming && (
+                      <span className="ml-1">
+                        {renderMessageStatus(msg.status)}
+                      </span>
+                    )}
                   </div>
                 </div>
 
