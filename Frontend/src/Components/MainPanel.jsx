@@ -5,7 +5,7 @@ const MainPanel = ({ selectedChat }) => {
   if (!selectedChat) {
     return (
       <main className="flex-1 flex flex-col items-center justify-center px-2 md:px-0 bg-[#0b141a]">
-        <div className='flex flex-col items-center'>
+        <div className="flex flex-col items-center">
           <div className="mb-6">
             <div className="w-[90vw] max-w-[250px] h-[36vw] max-h-[140px] bg-gray-800 rounded-lg flex items-center justify-center relative">
               <div className="w-[72vw] max-w-[200px] h-[28vw] max-h-[100px] bg-[#222] rounded-lg flex flex-wrap p-1">
@@ -34,7 +34,7 @@ const MainPanel = ({ selectedChat }) => {
             </button>
           </div>
 
-          <div className='mt-12 text-xs text-gray-400 flex items-center gap-2'>
+          <div className="mt-12 text-xs text-gray-400 flex items-center gap-2">
             <Lock size={14} />
             Your personal messages are end-to-end encrypted
           </div>
@@ -52,9 +52,7 @@ const MainPanel = ({ selectedChat }) => {
             <UserCircle2 size={40} className="text-gray-300" />
           </div>
           <div>
-            <div className="font-medium text-white text-[17px]">
-              {selectedChat.name}
-            </div>
+            <div className="font-medium text-white text-[17px]">{selectedChat.name}</div>
             <div className="text-xs text-gray-400">last seen today at 14:30</div>
           </div>
         </div>
@@ -66,57 +64,132 @@ const MainPanel = ({ selectedChat }) => {
         </div>
       </div>
 
-      {/* Messages area with background pattern */}
-      <div className="flex-1 overflow-y-auto px-16 py-4 space-y-1 flex flex-col relative bg-[#0b141a]" 
-           style={{
-             backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cg fill-opacity='0.03'%3E%3Cpolygon fill='%23ffffff' points='50 0 60 40 100 50 60 60 50 100 40 60 0 50 40 40'/%3E%3C/g%3E%3C/svg%3E")`,
-             backgroundSize: '400px 400px'
-           }}>
-        
-        {selectedChat.message.map((msg, index) => {
-          const isIncoming = msg.from === selectedChat.wa_id;
-          const showTail = index === selectedChat.message.length - 1 || 
-                          selectedChat.message[index + 1]?.from !== msg.from;
-          
-          return (
-            <div
-              key={msg._id}
-              className={`
-                max-w-[65%] px-3 py-2 text-[14.2px] leading-[19px] relative mb-1
-                ${isIncoming ?
-                  'bg-[#202c33] text-gray-100 self-start rounded-tr-lg rounded-br-lg rounded-bl-lg' :
-                  'bg-[#005c4b] text-white self-end rounded-tl-lg rounded-bl-lg rounded-br-lg'
-                }
-                ${showTail && isIncoming ? 'rounded-bl-sm' : ''}
-                ${showTail && !isIncoming ? 'rounded-br-sm' : ''}
-              `}
-            >
-              <div className="pr-12">
-                {msg.body}
+      {/* Messages area */}
+      <div
+        className="flex-1 overflow-y-auto px-16 py-4 space-y-1 flex flex-col relative bg-[#0b141a]"
+        style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cg fill-opacity='0.03'%3E%3Cpolygon fill='%23ffffff' points='50 0 60 40 100 50 60 60 50 100 40 60 0 50 40 40'/%3E%3C/g%3E%3C/svg%3E")`,
+          backgroundSize: '400px 400px'
+        }}
+      >
+        {[...selectedChat.message]
+          .reverse() // oldest first at the top, newest last at bottom
+          .map((msg, index, arr) => {
+            const isIncoming = msg.from === selectedChat.wa_id;
+            const showTail = index === arr.length - 1 || arr[index + 1]?.from !== msg.from;
+
+            return (
+              <div
+                key={msg._id}
+                className={`
+                  max-w-[65%] px-3 py-2 text-[14.2px] leading-[19px] relative mb-1
+                  ${isIncoming
+                    ? 'bg-[#202c33] text-gray-100 self-start rounded-tr-lg rounded-br-lg rounded-bl-lg'
+                    : 'bg-[#005c4b] text-white self-end rounded-tl-lg rounded-bl-lg rounded-br-lg'
+                  }
+                  ${showTail && isIncoming ? 'rounded-bl-sm' : ''}
+                  ${showTail && !isIncoming ? 'rounded-br-sm' : ''}
+                `}
+              >
+                <div className="pr-12">{msg.body}</div>
+                <div
+                  className={`absolute bottom-1 right-3 text-xs flex items-center gap-1 ${isIncoming ? 'text-gray-400' : 'text-gray-300'}`}
+                >
+                  <span>{new Date(Number(msg.timestamp)).toLocaleTimeString()}</span>
+                  {!isIncoming && msg.status && (
+                    <>
+                      {msg.status === 'sent' && (
+                        <svg
+                          width="16"
+                          height="12"
+                          viewBox="0 0 16 12"
+                          fill="none"
+                          className="text-gray-400"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M1 6L6 11L15 2"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                      )}
+                      {msg.status === 'delivered' && (
+                        <svg
+                          width="18"
+                          height="12"
+                          viewBox="0 0 18 12"
+                          fill="none"
+                          className="text-gray-400"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M1 6L6 11L15 2"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                          <path
+                            d="M3 6L8 11L17 2"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                      )}
+                      {msg.status === 'read' && (
+                        <svg
+                          width="18"
+                          height="12"
+                          viewBox="0 0 18 12"
+                          fill="none"
+                          className="text-blue-400"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M1 6L6 11L15 2"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                          <path
+                            d="M3 6L8 11L17 2"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                      )}
+                    </>
+                  )}
+                </div>
               </div>
-              <div className={`absolute bottom-1 right-3 text-xs flex items-center gap-1 ${
-                isIncoming ? 'text-gray-400' : 'text-gray-300'
-              }`}>
-                <span>14:30</span>
-                {!isIncoming && (
-                  <svg width="16" height="11" viewBox="0 0 16 11" fill="none" className="text-blue-400">
-                    <path d="M11.071 0.929L4.071 7.929L1.929 5.787" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    <path d="M16 1L9 8L6.5 5.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                )}
-              </div>
-            </div>
-          );
-        })}
+            );
+          })}
       </div>
 
       {/* Message input area */}
       <div className="bg-[#202c33] px-4 py-3 flex items-center gap-3">
+        {/* Emoji button */}
         <button className="text-gray-400 hover:text-gray-200">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M9.153 11.603c.795 0 1.439-.879 1.439-1.962s-.644-1.962-1.439-1.962-1.439.879-1.439 1.962.644 1.962 1.439 1.962zm-3.204 1.362c-.026-.307-.131 5.218 6.063 5.551 6.066-.25 6.066-5.551 6.066-5.551-6.078 1.416-12.129 0-12.129 0zm11.363 1.108s-.669 1.959-5.051 1.959c-4.27 0-5.064-1.959-5.064-1.959l10.115 0zM7.1 6.374c-.026-.307-.131 5.218 6.063 5.551 6.066-.25 6.066-5.551 6.066-5.551-6.078 1.416-12.129 0-12.129 0z"/>
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path d="M9.153 11.603c.795 0 1.439-.879 1.439-1.962s-.644-1.962-1.439-1.962-1.439.879-1.439 1.962.644 1.962 1.439 1.962zm-3.204 1.362c-.026-.307-.131 5.218 6.063 5.551 6.066-.25 6.066-5.551 6.066-5.551-6.078 1.416-12.129 0-12.129 0zm11.363 1.108s-.669 1.959-5.051 1.959c-4.27 0-5.064-1.959-5.064-1.959l10.115 0zM7.1 6.374c-.026-.307-.131 5.218 6.063 5.551 6.066-.25 6.066-5.551 6.066-5.551-6.078 1.416-12.129 0-12.129 0z" />
           </svg>
         </button>
+
+        {/* Input field */}
         <div className="flex-1 relative">
           <input
             type="text"
@@ -124,14 +197,28 @@ const MainPanel = ({ selectedChat }) => {
             className="w-full bg-[#2a3942] text-white placeholder-gray-400 rounded-lg px-4 py-2.5 pr-12 focus:outline-none"
           />
           <button className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-200">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path d="M12 14c1.66 0 2.99-1.34 2.99-3L15 5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z" />
             </svg>
           </button>
         </div>
+
+        {/* Mic button */}
         <button className="text-gray-400 hover:text-gray-200">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 14c1.66 0 2.99-1.34 2.99-3L15 5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z"/>
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path d="M12 14c1.66 0 2.99-1.34 2.99-3L15 5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z" />
           </svg>
         </button>
       </div>
@@ -139,4 +226,4 @@ const MainPanel = ({ selectedChat }) => {
   );
 };
 
-export default MainPanel
+export default MainPanel;
