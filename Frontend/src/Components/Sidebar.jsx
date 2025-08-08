@@ -1,24 +1,11 @@
 import React, { useEffect } from 'react';
 import { Bell, Plus, Search, UserCircle2, X } from 'lucide-react';
-import api from '../Utils/axios';
-import { fetchMyChats } from '../Services/messageService';
 
 
-const Sidebar = ({ open, onClose }) => {
-  const fetchChats = async () => {
-    try {
-      const response = await fetchMyChats()
-      console.log(response.chats)
-    } catch (error) {
-      console.error("Error fetching chats:", error)
-    }
-  }
 
-  useEffect(() => {
-    fetchChats()
-  }, [])
+const Sidebar = ({ open, onClose, chats }) => {
+  console.log(chats)
   return (
-
     <aside
       className={`
         fixed z-30 top-0 left-0 h-full w-[85vw] max-w-xs bg-[#222424]
@@ -61,11 +48,23 @@ const Sidebar = ({ open, onClose }) => {
         </div>
       </div>
 
-
-
       <div className='flex-1 overflow-y-auto px-2'>
-        sdfds
+        {chats && chats.length > 0 ? (
+          chats.map((chat) => (
+            <div key={chat._id} className='flex items-center space-x-3 p-2 hover:bg-[#161717] rounded cursor-pointer'>
+              <UserCircle2 size={40} className='text-gray-400' />
+              <div className='flex-1'>
+                <div className='font-semibold'>{chat.name}</div>
+                <p className='text-xs text-gray-500'>{chat.wa_id}</p>
+                <div className='text-sm text-gray-500'>{chat?.message[0]?.body?.slice(0, 40) + '...'}</div>
+              </div>
+            </div>
+          ))
+        ) : (
+          <div className='text-center text-gray-500 mt-4'>No chats available</div>
+        )}
       </div>
+
     </aside>
   );
 };

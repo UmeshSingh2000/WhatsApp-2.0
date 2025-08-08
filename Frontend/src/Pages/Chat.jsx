@@ -1,11 +1,26 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { Menu } from 'lucide-react';
 import MainPanel from '../Components/MainPanel';
 import Sidebar from '../Components/Sidebar';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchMessage, groupMessage } from '../Redux/Features/messageSlice';
+
 
 const Chat = () => {
+    const dispatch = useDispatch();
     const [open, setOpen] = useState(false);
+    const { groupedChat } = useSelector((state) => state.message)
+
+    const fetch = async () => {
+        await dispatch(fetchMessage());
+        await dispatch(groupMessage());
+    }
+    useEffect(() => {
+        if (!groupedChat) {
+            fetch();
+        }
+    }, [dispatch, groupedChat])
 
     return (
         <div className="bg-[#161717] h-screen flex relative text-white overflow-hidden">
@@ -18,7 +33,7 @@ const Chat = () => {
                 <Menu size={24} />
             </button>
 
-            <Sidebar open={open} onClose={() => setOpen(false)} />
+            <Sidebar chats={groupedChat} open={open} onClose={() => setOpen(false)} />
 
             <MainPanel />
 
