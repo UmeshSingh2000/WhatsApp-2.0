@@ -45,7 +45,8 @@ connectDb();
 // processData();
 
 // Routes
-app.get('/', (req, res) => {
+app.get('/', async(req, res) => {
+    await fetch('https://keepalive-1-xqmr.onrender.com')
     res.send('Server is running');
 });
 
