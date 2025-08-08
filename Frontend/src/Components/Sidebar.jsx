@@ -7,7 +7,7 @@ const Sidebar = ({ open, onClose, chats, onSelectChat }) => {
   return (
     <aside
       className={`
-        fixed z-30 top-0 left-0 h-full w-[85vw] max-w-xs bg-[#222424]
+        fixed z-30 top-0 left-0 h-full w-[85vw] max-w-xs bg-[#161717]
         flex flex-col border-r border-gray-700 transition-transform duration-200
         ${open ? 'translate-x-0' : '-translate-x-full'}
         md:static md:translate-x-0 md:w-[375px] md:max-w-none md:z-auto
@@ -22,17 +22,17 @@ const Sidebar = ({ open, onClose, chats, onSelectChat }) => {
       <div className="flex items-center p-4 gap-4">
         <UserCircle2 size={36} className="text-gray-400" />
         <span className="font-semibold text-lg flex-1">WhatsApp</span>
-        <button className="p-2 hover:bg-[#161717] rounded hidden md:block">
+        <button className="p-2 hover:bg-[#282828] rounded hidden md:block">
           <Plus size={20} />
         </button>
-        <button className="p-2 hover:bg-[#161717] rounded hidden md:block">
+        <button className="p-2 hover:bg-[#282828] rounded hidden md:block">
           <Bell size={20} />
         </button>
       </div>
 
 
       <div className='px-4'>
-        <div className='bg-[#161717] rounded flex items-center space-x-2 px-3 py-2'>
+        <div className='bg-[#2E2F2F] rounded flex items-center space-x-2 px-3 py-2'>
           <Search className='text-gray-400' size={18} />
           <input
             className='bg-transparent focus:outline-none text-sm w-full'
@@ -53,7 +53,7 @@ const Sidebar = ({ open, onClose, chats, onSelectChat }) => {
             <div
               key={chat.wa_id}
               onClick={() => onSelectChat(chat)}
-              className='flex items-center space-x-3 p-2 hover:bg-[#161717] rounded cursor-pointer'
+              className='flex items-center space-x-3 p-2 hover:bg-[#282828] rounded cursor-pointer'
             >
               <UserCircle2 size={40} className='text-gray-400' />
               <div className='flex-1'>

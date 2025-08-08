@@ -3,3 +3,8 @@
 html,body{
   background-color: #FCF5EB;
 }
+
+.chatScreen{
+  background-image: url('./assets/secondary.png');
+  background-color: #161717;
+}
