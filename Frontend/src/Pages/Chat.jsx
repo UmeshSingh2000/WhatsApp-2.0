@@ -9,6 +9,8 @@ import { fetchMessage, groupMessage } from '../Redux/Features/messageSlice';
 
 const Chat = () => {
     const dispatch = useDispatch();
+    const [selectedChat, setSelectedChat] = useState(null);
+
     const [open, setOpen] = useState(false);
     const { groupedChat } = useSelector((state) => state.message)
 
@@ -33,9 +35,9 @@ const Chat = () => {
                 <Menu size={24} />
             </button>
 
-            <Sidebar chats={groupedChat} open={open} onClose={() => setOpen(false)} />
+            <Sidebar onSelectChat={setSelectedChat} chats={groupedChat} open={open} onClose={() => setOpen(false)} />
 
-            <MainPanel />
+            <MainPanel selectedChat={selectedChat} />
 
             {open && (
                 <div

@@ -3,8 +3,7 @@ import { Bell, Plus, Search, UserCircle2, X } from 'lucide-react';
 
 
 
-const Sidebar = ({ open, onClose, chats }) => {
-  console.log(chats)
+const Sidebar = ({ open, onClose, chats, onSelectChat }) => {
   return (
     <aside
       className={`
@@ -51,12 +50,18 @@ const Sidebar = ({ open, onClose, chats }) => {
       <div className='flex-1 overflow-y-auto px-2'>
         {chats && chats.length > 0 ? (
           chats.map((chat) => (
-            <div key={chat._id} className='flex items-center space-x-3 p-2 hover:bg-[#161717] rounded cursor-pointer'>
+            <div
+              key={chat.wa_id}
+              onClick={() => onSelectChat(chat)}
+              className='flex items-center space-x-3 p-2 hover:bg-[#161717] rounded cursor-pointer'
+            >
               <UserCircle2 size={40} className='text-gray-400' />
               <div className='flex-1'>
                 <div className='font-semibold'>{chat.name}</div>
                 <p className='text-xs text-gray-500'>{chat.wa_id}</p>
-                <div className='text-sm text-gray-500'>{chat?.message[0]?.body?.slice(0, 40) + '...'}</div>
+                <div className='text-sm text-gray-500'>
+                  {chat?.message[0]?.body?.slice(0, 40) + '...'}
+                </div>
               </div>
             </div>
           ))
