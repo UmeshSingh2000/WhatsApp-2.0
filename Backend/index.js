@@ -34,7 +34,7 @@ app.get('/', (req, res) => {
 });
 
 app.use('/api/auth', userRoutes) //add limiter here later if needed
-app.use('/api/chat', authenticateToken(), messageRoutes);
+app.use('/api/chat', messageRoutes);
 
 //auth check
 app.get('/api/check-auth', authenticateToken('access'), async (req, res) => {

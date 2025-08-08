@@ -5,7 +5,8 @@ const statusCodes = require('../Utils/StatusCodes');
 
 const fetchMyChats = async (req, res) => {
     try {
-        const { phoneNumber } = req.user;
+        // const { phoneNumber } = req.user;
+        const phoneNumber = 918329446654;
         if (!phoneNumber) {
             return res
                 .status(statusCodes.UNAUTHORIZED)

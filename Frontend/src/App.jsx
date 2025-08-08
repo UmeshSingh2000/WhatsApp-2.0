@@ -9,28 +9,33 @@ import { useDispatch } from 'react-redux'
 
 const fulfilled = "auth/checkAuth/fulfilled"
 const App = () => {
-  const dispatch = useDispatch();
-  const navigate = useNavigate()
-  useEffect(() => {
-    (
-      async () => {
-        const response = await dispatch(checkAuth());
-        if (response.type === fulfilled) {
-          navigate('/chat', { replace: true })
-        }
-      }
-    )()
-  }, [])
+
+  //uncomment this for authentication
+
+  // const dispatch = useDispatch();
+  // const navigate = useNavigate()
+  // useEffect(() => {
+  //   (
+  //     async () => {
+  //       const response = await dispatch(checkAuth());
+  //       if (response.type === fulfilled) {
+  //         navigate('/chat', { replace: true })
+  //       }
+  //     }
+  //   )()
+  // }, [])
+  
   return (
     <>
       <Toaster
         position="top-right"
         reverseOrder={false} />
       <Routes>
-        <Route path="/" element={<Lander />} />
-        <Route element={<PrivateRoute />}>
+        {/* <Route path="/" element={<Lander />} /> */}
+        <Route path="/" element={<Chat />} />
+        {/* <Route element={<PrivateRoute />}>
           <Route path='/chat' element={<Chat />} />
-        </Route>
+        </Route> */}
       </Routes>
     </>
   )
