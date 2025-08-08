@@ -1,7 +1,7 @@
 
 const statusCodes = require('../Utils/StatusCodes');
 const errorMessage = require('../Utils/errorMessages');
-const { verifyToken } = require('../Utils/JWT');
+const { verifyToken } = require('../Utils/jwt');
 const authenticateToken = (tokenType = 'access') => {
     return (req, res, next) => {
         try {

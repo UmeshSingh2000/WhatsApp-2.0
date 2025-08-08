@@ -2,7 +2,7 @@ const errorMessage = require("../Utils/errorMessages");
 const statusCodes = require("../Utils/StatusCodes");
 const User = require('../Database/Models/userSchema');
 const { checkPassword, hashPassword } = require("../Utils/password");
-const { generateToken } = require("../Utils/JWT");
+const { generateToken } = require("../Utils/jwt");
 const { phoneNumberValid, removeNonDigitCharacters } = require("../Utils/helpers");
 
 const loginUser = async (req, res) => {
